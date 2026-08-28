@@ -1,0 +1,39 @@
+name: Hourly Window Job
+
+on:
+  schedule:
+    - cron: '43 * * * *' # Runs every hour
+  workflow_dispatch:
+
+jobs:
+  run-within-window:
+    runs-on: ubuntu-latest
+    env:
+      RUN_JOB:
+    steps:
+      - name: Check Time Window
+        run: |
+          # Get current hour in UTC (00 to 23)
+          CURRENT_HOUR=$(date -u +%H)
+          
+          # Force base-10 interpretation to avoid octal errors with leading zeros
+          CURRENT_HOUR=$((10#$CURRENT_HOUR))
+          
+          echo "Current UTC Hour: $CURRENT_HOUR"
+
+          # Check if hour is between 10 and 15 (inclusive)
+          if [ "$CURRENT_HOUR" -ge 10 ] && [ "$CURRENT_HOUR" -le 16 ]; then
+            echo "✅ Within the 10:00 - 15:00 UTC window. Continuing..."
+            # Set an environment variable or flag to let subsequent steps know to run
+            echo "RUN_JOB=true" >> $GITHUB_ENV
+          else
+            echo "❌ Outside the target window. Exiting gracefully."
+            echo "RUN_JOB=false" >> $GITHUB_ENV
+          fi
+
+      - name: Your Core Logic
+        if: env.RUN_JOB == 'true'
+        run: |
+          echo "event=${{ github.event_name }}"
+          echo "schedule=${{ github.event.schedule }}"
+          date -u
