@@ -2,7 +2,7 @@ name: Hourly Window Job (Conditional Strict)
 
 on:
   schedule:
-    - cron: '43 2,3,4,5,6,7,8,10 * * *'
+    - cron: '0 */1.5 * * *'
   workflow_dispatch:
 
 jobs:
@@ -12,18 +12,18 @@ jobs:
     steps:
       - name: Check Time Window for Schedules Only
         run: |
+          # If it IS a schedule event, enforce the 10:00 - 16:00 UTC window
+          CURRENT_HOUR=$(date -u +%H)
+          CURRENT_HOUR=$((10#$CURRENT_HOUR))
+          echo "Current UTC Hour: $CURRENT_HOUR"
+          date -u
+
           # If it's NOT a schedule event (e.g., manual trigger), bypass the check and continue
           if [ "${{ github.event_name }}" != "schedule" ]; then
             echo "ℹ️ Triggered via '${{ github.event_name }}'. Bypassing time window check."
             exit 0
           fi
-
-          # If it IS a schedule event, enforce the 10:00 - 16:00 UTC window
-          CURRENT_HOUR=$(date -u +%H)
-          CURRENT_HOUR=$((10#$CURRENT_HOUR))
           
-          echo "Current UTC Hour: $CURRENT_HOUR"
-
           if [ "$CURRENT_HOUR" -ge 10 ] && [ "$CURRENT_HOUR" -le 16 ]; then
             echo "✅ Within the 10:00 - 16:00 UTC window. Proceeding..."
             exit 0
