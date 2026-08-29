@@ -2,7 +2,7 @@ name: Hourly Window Job (Conditional Strict)
 
 on:
   schedule:
-    - cron: '0 * * * *' # Runs every hour
+    - cron: '43 * * * *'
   workflow_dispatch:
 
 jobs:
