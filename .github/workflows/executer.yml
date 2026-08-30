@@ -95,37 +95,41 @@ jobs:
 
           echo "Starting sequence at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
-          if check_and_run "17:50:00"; then
+          if check_and_run "10:50:00"; then
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
           fi
           
-          if check_and_run "18:30:00"; then
+          if check_and_run "11:30:00"; then
             # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
             # trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
             trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
           fi
           
-          if check_and_run "19:10:00"; then
+          if check_and_run "11:50:00"; then
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
+          fi
+          
+          if check_and_run "12:10:00"; then
             # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
             # trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
             trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
           fi
           
-          if check_and_run "19:50:00"; then
+          if check_and_run "12:50:00"; then
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
           fi
           
-          if check_and_run "20:50:00"; then
+          if check_and_run "13:50:00"; then
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
           fi
           
-          if check_and_run "21:30:00"; then
+          if check_and_run "14:30:00"; then
             # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
             # trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
             trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
