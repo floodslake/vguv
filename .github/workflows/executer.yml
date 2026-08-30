@@ -103,8 +103,6 @@ jobs:
           fi
           
           if check_and_run "11:30:00"; then
-            # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-            # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
             trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
           fi
           
@@ -113,8 +111,6 @@ jobs:
           fi
           
           if check_and_run "12:10:00"; then
-            # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-            # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
             trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
           fi
           
@@ -127,7 +123,7 @@ jobs:
           if check_and_run "13:10:00"; then
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
-            trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_live.yml"
           fi
           
           if check_and_run "13:50:00"; then
@@ -140,6 +136,12 @@ jobs:
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
             trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
+          fi
+
+          if check_and_run "15:20:00"; then
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_live.yml"
           fi
           
           echo "Sequence finished at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
