@@ -91,6 +91,7 @@ jobs:
             gh api --method POST -H "Accept: application/vnd.github+json" \
               /repos/"$repo"/actions/workflows/"$workflow_file"/dispatches \
               -f ref="$ref"
+            sleep 5
           }
 
           echo "Starting sequence at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
