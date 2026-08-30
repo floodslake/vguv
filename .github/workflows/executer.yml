@@ -43,7 +43,6 @@ jobs:
         run: |
           set -euo pipefail
           
-          # Helper to check time: sleeps if in future, returns failure (skips) if in past
           check_and_run() {
             local target_time="$1"
             local target_epoch=$(date -u -d "$target_time" +%s 2>/dev/null || date -u -j -f "%H:%M:%S" "$target_time" +%s)
@@ -55,10 +54,21 @@ jobs:
               sleep "$diff"
               return 0
             else
-              echo "Target time $target_time UTC has already passed. Skipping batch."
-              return 1
+              local late_seconds=$(( diff * -1 ))
+              if [ $late_seconds -le 1200 ]; then
+                echo "Target time $target_time UTC passed $late_seconds seconds ago (<= 20 mins). Executing immediately!"
+                return 0
+              elif [ $late_seconds -gt 1800 ]; then
+                echo "Target time $target_time UTC passed $late_seconds seconds ago (> 30 mins). Skipping batch."
+                return 1
+              else
+                # Between 20 and 30 minutes late (optional buffer zone, treating as skip or execute based on your preference)
+                echo "Target time $target_time UTC is $late_seconds seconds late (between 20-30m buffer). Skipping."
+                return 1
+              fi
             fi
           }
+          
           sleep_until() {
             local target_time="$1"
             local target_epoch=$(date -u -d "$target_time" +%s 2>/dev/null || date -u -j -f "%H:%M:%S" "$target_time" +%s)
@@ -85,47 +95,40 @@ jobs:
 
           echo "Starting sequence at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
-          # initial batch (5:50pm)
-          sleep_until "17:50:00"
-          trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
-          trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-          trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
-
-          # wait 40 minutes -> 6:30pm
-          sleep_until "18:30:00"
-          # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-          # trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
-          trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
-
-          # wait 60 minutes -> 7:30pm
-          sleep_until "19:10:00"
-          # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-          # trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
-          trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
-
-          # wait 20 minutes -> 7:50pm
-          sleep_until "19:50:00"
-          trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
-          trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-          trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
-
-          # wait 60 minutes -> 8:50pm
-          sleep_until "20:50:00"
-          trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
-          trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-          trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
-
-          # wait 40 minutes -> 9:30pm
-          sleep_until "21:30:00"
-          # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-          # trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
-          trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
-
-          # if check_and_run "17:50:00"; then
-          #   trigger_workflow "$TARGET_REPO1" "$TARGET_REF01" "workflow.yml"
-          #   trigger_workflow "$TARGET_REPO1" "$TARGET_REF01" "workflow_fc.yml"
-          #   trigger_workflow "$TARGET_REPO1" "$TARGET_REF01" "workflow_s.yml"
-          #   # ... (add the remaining triggers for this batch to reach 10) ...
-          # fi
-
+          if check_and_run "17:50:00"; then
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
+          fi
+          
+          if check_and_run "18:30:00"; then
+            # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
+            # trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
+            trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
+          fi
+          
+          if check_and_run "19:10:00"; then
+            # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
+            # trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
+            trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
+          fi
+          
+          if check_and_run "19:50:00"; then
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
+          fi
+          
+          if check_and_run "20:50:00"; then
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
+          fi
+          
+          if check_and_run "21:30:00"; then
+            # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
+            # trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
+            trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
+          fi
+          
           echo "Sequence finished at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
