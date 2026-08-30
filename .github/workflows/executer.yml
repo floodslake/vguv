@@ -1,0 +1,93 @@
+name: ForkY Master Executor
+
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  run-sequence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      ACTION_TOKEN: ${{ secrets.ACTION_TOKEN }}
+      TARGET_REF01: "live"
+      TARGET_REF02: "main"
+      TARGET_REPO1: "floodslake/ncp-live-finder"   # replace with first target owner/repo
+      TARGET_REPO2: "floodslake/ncp-live-now"   # replace with second target owner/repo
+    steps:
+      - name: Install gh
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y curl jq
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt-get update -y
+          sudo apt-get install -y gh
+
+      - name: Authenticate gh
+        env:
+          ACTION_TOKEN: ${{ secrets.ACTION_TOKEN }}
+        run: |
+          echo "$ACTION_TOKEN" | gh auth login --with-token
+
+      - name: Run Timed Sequence (simple)
+        env:
+          TARGET_REPO1: ${{ env.TARGET_REPO1 }}
+          TARGET_REPO2: ${{ env.TARGET_REPO2 }}
+          TARGET_REF01: ${{ env.TARGET_REF01 }}
+          TARGET_REF02: ${{ env.TARGET_REF02 }}
+        run: |
+          set -euo pipefail
+
+          trigger_workflow() {
+            local repo="$1"
+            local ref="$2"
+            local workflow_file="$3"
+            echo "Triggering $workflow_file on $repo at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+            gh api --method POST -H "Accept: application/vnd.github+json" \
+              /repos/"$repo"/actions/workflows/"$workflow_file"/dispatches \
+              -f ref="$ref"
+          }
+
+          echo "Starting sequence at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+          # initial batch (5:50pm)
+          trigger_workflow "$TARGET_REPO1" "$TARGET_REFO1" "workflow.yml"
+          trigger_workflow "$TARGET_REPO1" "$TARGET_REFO1" "workflow_fc.yml"
+          trigger_workflow "$TARGET_REPO1" "$TARGET_REFO1" "workflow_s.yml"
+
+          # # wait 40 minutes -> 6:30pm
+          # sleep 2400
+          # trigger_workflow "$TARGET_REPO1" "workflow_fc.yml"
+          # trigger_workflow "$TARGET_REPO2" "workflow_s.yml"
+          # trigger_workflow "$TARGET_REPO2" "workflow_live.yml"
+
+          # # wait 60 minutes -> 7:30pm
+          # sleep 3600
+          # trigger_workflow "$TARGET_REPO1" "workflow_fc.yml"
+          # trigger_workflow "$TARGET_REPO2" "workflow_s.yml"
+          # trigger_workflow "$TARGET_REPO2" "workflow_live.yml"
+
+          # wait 20 minutes -> 7:50pm
+          sleep 1200
+          trigger_workflow "$TARGET_REPO1" "$TARGET_REFO1" "workflow.yml"
+          trigger_workflow "$TARGET_REPO1" "$TARGET_REFO1" "workflow_fc.yml"
+          trigger_workflow "$TARGET_REPO1" "$TARGET_REFO1" "workflow_s.yml"
+
+          # wait 60 minutes -> 8:50pm
+          sleep 3600
+          trigger_workflow "$TARGET_REPO1" "$TARGET_REFO1" "workflow.yml"
+          trigger_workflow "$TARGET_REPO1" "$TARGET_REFO1" "workflow_fc.yml"
+          trigger_workflow "$TARGET_REPO1" "$TARGET_REFO1" "workflow_s.yml"
+
+          # # wait 40 minutes -> 9:30pm
+          # sleep 2400
+          # trigger_workflow "$TARGET_REPO1" "workflow_fc.yml"
+          # trigger_workflow "$TARGET_REPO2" "workflow_s.yml"
+          # trigger_workflow "$TARGET_REPO2" "workflow_live.yml"
+
+          echo "Sequence finished at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
