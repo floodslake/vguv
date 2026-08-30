@@ -104,7 +104,7 @@ jobs:
           
           if check_and_run "11:30:00"; then
             # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-            # trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
+            # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
             trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
           fi
           
@@ -114,7 +114,7 @@ jobs:
           
           if check_and_run "12:10:00"; then
             # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-            # trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
+            # trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
             trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
           fi
           
@@ -126,7 +126,7 @@ jobs:
           
           if check_and_run "13:10:00"; then
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-            trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
             trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
           fi
           
@@ -138,7 +138,7 @@ jobs:
           
           if check_and_run "14:30:00"; then
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
-            trigger_workflow "$TARGET_REPO2" "$TARGET_REF1" "workflow_s.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
             trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
           fi
           
