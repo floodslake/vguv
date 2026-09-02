@@ -126,6 +126,12 @@ jobs:
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_live.yml"
           fi
           
+          if check_and_run "13:31:00"; then
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_live.yml"
+          fi
+          
           if check_and_run "13:50:00"; then
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
@@ -138,7 +144,7 @@ jobs:
             trigger_workflow "$TARGET_REPO2" "$TARGET_REF2" "workflow_live.yml"
           fi
 
-          if check_and_run "15:20:00"; then
+          if check_and_run "15:10:00"; then
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_live.yml"
