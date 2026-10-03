@@ -22,6 +22,7 @@ jobs:
       TARGET_REPO1: "floodslake/ncp-live-finder"
       TARGET_REPO2: "floodslake/ncp-live-now"
       TARGET_REF1: "live"
+      TARGET_REF3: "to_py"
       TARGET_REF2: "main"
     steps:
       - name: Install gh
@@ -105,7 +106,7 @@ jobs:
           if check_and_run "10:50:00"; then
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
-            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF3" "workflow.yml"
           fi
           
           if check_and_run "11:30:00"; then
@@ -113,7 +114,7 @@ jobs:
           fi
           
           if check_and_run "11:50:00"; then
-            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF3" "workflow.yml"
           fi
           
           if check_and_run "12:10:00"; then
@@ -123,7 +124,7 @@ jobs:
           if check_and_run "12:50:00"; then
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_fc.yml"
             trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow_s.yml"
-            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF3" "workflow.yml"
           fi
           
           if check_and_run "13:10:00"; then
@@ -139,7 +140,7 @@ jobs:
           fi
           
           if check_and_run "13:45:00"; then
-            trigger_workflow "$TARGET_REPO1" "$TARGET_REF1" "workflow.yml"
+            trigger_workflow "$TARGET_REPO1" "$TARGET_REF3" "workflow.yml"
           fi
           
           if check_and_run "13:52:00"; then
