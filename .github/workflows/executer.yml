@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   run-sequence:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     timeout-minutes: 360
     env:
       ACTION_TOKEN: ${{ secrets.ACTION_TOKEN }}
