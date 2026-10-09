@@ -1,0 +1,30 @@
+name: Cleanup Runs
+
+on:
+  schedule:
+    - cron: '5 0 1 * *'
+  workflow_dispatch:
+
+jobs:
+  clean_action:
+    runs-on: ubuntu-slim
+    permissions:
+      actions: write
+
+    steps:
+      - name: Delete Old Workflow Runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          REPO="${{ github.repository }}"
+          CUTOFF=$(date -u -d "$(date -u +%Y-%m-01) -1 month" '+%Y-%m-%dT00:00:00Z')
+
+          echo "Deleting all workflow runs created before: $CUTOFF"
+
+          gh api --paginate "repos/$REPO/actions/runs?created=%3C$CUTOFF&per_page=100" \
+            --jq '.workflow_runs[].id' |
+          while read -r ID; do
+            [ -z "$ID" ] && continue
+            echo "Deleting workflow run: $ID"
+            gh run delete "$ID" --repo "$REPO" || true
+          done
